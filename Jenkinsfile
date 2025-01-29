@@ -9,10 +9,8 @@ pipeline {
     stages {
         stage('Checkout Code from GitHub') {
             steps {
-                script {
-                    // Checkout code from GitHub
-                    git credentialsId: "${GIT_CRED}", url: 'https://github.com/sakit333/microservices_project.git', branch: 'main'
-                }
+                // SCM will pull the repository configured in the Jenkins job
+                checkout scm
             }
         }
         stage('Create Docker Network') {
@@ -35,7 +33,7 @@ pipeline {
                     // Build welcome-service Docker image
                     docker.build('welcome-service-image', './welcome-service')
 
-                    // Run the welcome-service container on port 8083
+                    // Run the welcome-service container on port 8081
                     docker.image('welcome-service-image').run("-d --network ${DOCKER_NETWORK} -p 8081:8081")
                 }
             }
@@ -57,7 +55,7 @@ pipeline {
                     // Build auth-service Docker image
                     docker.build('auth-service-image', './auth-service')
 
-                    // Run the auth-service container on port 8081
+                    // Run the auth-service container on port 8083
                     docker.image('auth-service-image').run("-d --network ${DOCKER_NETWORK} -p 8083:8083")
                 }
             }
